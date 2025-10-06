@@ -14,12 +14,10 @@ COPY package.json ./
 COPY package-lock.json ./
 COPY tsconfig.json ./
 
-# Verificar se package-lock.json foi copiado (debug)
-RUN ls -la package* || true
-
 # Instalar dependências (incluindo devDependencies para build)
+# --ignore-scripts previne execução de "prepare" antes de copiar src/
 # Tenta npm ci primeiro, se falhar usa npm install
-RUN npm ci || npm install
+RUN npm ci --ignore-scripts || npm install --ignore-scripts
 
 # Copiar código fonte
 COPY src ./src

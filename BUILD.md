@@ -175,9 +175,9 @@ Este erro foi corrigido. Se ainda ocorrer:
    COPY tsconfig.test.json ./
    ```
 
-### Erro: "npm ci failed"
+### Erro: "npm ci failed" ou "TS18003: No inputs were found"
 
-**Problema**:
+**Problema 1**:
 ```
 ERROR [builder 6/9] RUN npm ci
 npm error The `npm ci` command can only install with an existing package-lock.json
@@ -185,10 +185,26 @@ npm error The `npm ci` command can only install with an existing package-lock.js
 
 **Causa**: O arquivo `.dockerignore` estava excluindo `package-lock.json`.
 
+**Problema 2**:
+```
+error TS18003: No inputs were found in config file 'tsconfig.json'
+```
+
+**Causa Raiz**: O `package.json` contém um script `"prepare": "npm run build"` que é **executado automaticamente** durante `npm ci` ou `npm install`, **antes** de copiar a pasta `src/`, causando falha no TypeScript.
+
 **Solução** (JÁ CORRIGIDA):
 
 1. O `.dockerignore` foi atualizado para NÃO ignorar `package-lock.json`
 2. O `Dockerfile` copia explicitamente `package.json` e `package-lock.json`
+3. **IMPORTANTE**: O `Dockerfile` usa `--ignore-scripts` para prevenir execução de `prepare` antes de copiar `src/`:
+   ```dockerfile
+   RUN npm ci --ignore-scripts || npm install --ignore-scripts
+   ```
+4. O build é executado **explicitamente** após copiar o código-fonte:
+   ```dockerfile
+   COPY src ./src
+   RUN npm run build
+   ```
 
 Se ainda encontrar este erro:
 

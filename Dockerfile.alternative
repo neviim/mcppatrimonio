@@ -19,8 +19,9 @@ COPY package-lock.jso[n] ./ 2>/dev/null || true
 COPY tsconfig.json ./
 
 # Instalar dependências
+# --ignore-scripts previne execução de "prepare" antes de copiar src/
 # Usa npm install que funciona com ou sem lock file
-RUN npm install
+RUN npm install --ignore-scripts
 
 # Copiar código fonte
 COPY src ./src

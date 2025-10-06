@@ -2,16 +2,37 @@
 
 Guia de solução de problemas específicos do Docker.
 
-## ❌ Erro: npm ci failed
+## ❌ Erro: npm ci failed ou TS18003
 
-### Sintoma
+### Sintomas
+
+**Sintoma 1**:
 ```
 => ERROR [builder 6/9] RUN npm ci
 npm error The `npm ci` command can only install with an existing package-lock.json
 ```
 
+**Sintoma 2**:
+```
+error TS18003: No inputs were found in config file 'tsconfig.json'
+```
+
 ### Causa Raiz
-O arquivo `package-lock.json` não está sendo copiado para dentro do container Docker.
+
+**Causa 1**: O arquivo `package-lock.json` não está sendo copiado para dentro do container Docker.
+
+**Causa 2** (Mais Comum): O `package.json` contém um script `"prepare": "npm run build"` que é executado **automaticamente** durante `npm ci` ou `npm install`. Este script tenta compilar o TypeScript **antes** da pasta `src/` ser copiada, causando o erro `TS18003`.
+
+### Por que isso acontece?
+
+O npm executa automaticamente certos lifecycle scripts:
+- `prepare` - Executa **antes** de empacotar e **após** instalar dependências
+- `prepublish`, `postinstall` - Também executados automaticamente
+
+No Dockerfile, a ordem era:
+1. ✅ Copiar `package.json`, `package-lock.json`, `tsconfig.json`
+2. ❌ `npm ci` → Dispara `prepare` → Tenta `npm run build` → **Falha** (sem `src/`)
+3. ⏭️ Nunca chega aqui: `COPY src ./src`
 
 ### Diagnóstico
 

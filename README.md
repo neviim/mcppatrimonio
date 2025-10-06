@@ -586,6 +586,7 @@ Exemplo de deployment em Kubernetes disponível em `docs/DOCKER.md`.
 
 ### 🔧 Desenvolvimento
 - [Gerenciamento de Versão Node.js](docs/NODE_VERSION.md)
+- [NPM Lifecycle Scripts](docs/NPM_LIFECYCLE_SCRIPTS.md)
 - [Como Contribuir](CONTRIBUTING.md)
 - [Changelog](CHANGELOG.md)
 

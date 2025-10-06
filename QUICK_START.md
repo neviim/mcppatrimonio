@@ -30,9 +30,13 @@ docker compose logs -f
 ✋ SOLUÇÃO: Abra o Docker Desktop e aguarde inicializar
 ```
 
-### Erro: npm ci failed
+### Erro: npm ci failed ou TS18003
 ```bash
-# Use o Dockerfile alternativo (mais robusto)
+# SOLUÇÃO JÁ APLICADA: Dockerfile usa --ignore-scripts
+# Se ainda der erro, rebuild sem cache:
+docker compose build --no-cache
+
+# Ou use o Dockerfile alternativo:
 docker compose -f docker-compose.alternative.yml build
 docker compose -f docker-compose.alternative.yml up -d
 ```

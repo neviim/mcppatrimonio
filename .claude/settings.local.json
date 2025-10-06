@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "WebFetch(domain:10.10.0.4)",
+      "Bash(mkdir:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm test)",
+      "Bash(npm run test:coverage:*)",
+      "Read(//c/Users/neviim/AppData/Roaming/Claude/**)",
+      "Bash(dir:*)",
+      "Bash(docker compose:*)",
+      "Bash(node:*)",
+      "Bash(find:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

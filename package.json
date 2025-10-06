@@ -1,0 +1,54 @@
+{
+  "name": "mcppatrimonio",
+  "version": "0.2.0",
+  "description": "Servidor MCP para gestão de patrimônio - homeLab Jads",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "mcppatrimonio": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
+    "start": "node dist/index.js",
+    "dev": "tsc && node dist/index.js",
+    "dev:watch": "tsc --watch & nodemon --watch dist dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "lint": "echo 'Linter not configured yet'",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "patrimonio",
+    "homelab",
+    "typescript"
+  ],
+  "author": "homeLab Jads",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.18.2",
+    "dotenv": "^16.4.5",
+    "undici": "^6.19.8",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
+    "nodemon": "^3.0.0",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=22.15.0",
+    "npm": ">=10.0.0"
+  }
+}

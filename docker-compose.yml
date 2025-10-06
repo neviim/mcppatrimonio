@@ -1,0 +1,71 @@
+services:
+  mcppatrimonio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    image: mcppatrimonio:latest
+    container_name: mcppatrimonio-server
+    restart: unless-stopped
+
+    # Variáveis de ambiente (via arquivo .env)
+    env_file:
+      - .env
+
+    # Variáveis de ambiente diretas (sobrescrevem .env se necessário)
+    environment:
+      NODE_ENV: production
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+
+    # Stdin/Stdout para comunicação MCP
+    stdin_open: true
+    tty: true
+
+    # Limites de recursos
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "node", "-e", "process.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+    # Logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # Labels para organização
+    labels:
+      com.example.description: "MCP Patrimônio - Servidor de Gestão de Patrimônio"
+      com.example.version: "0.2.0"
+      com.example.team: "homeLab Jads"
+
+  # Serviço opcional: Watchtower para auto-update (descomentar se necessário)
+  # watchtower:
+  #   image: containrrr/watchtower
+  #   container_name: mcpneviim-watchtower
+  #   restart: unless-stopped
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   environment:
+  #     - WATCHTOWER_CLEANUP=true
+  #     - WATCHTOWER_POLL_INTERVAL=86400
+  #   command: mcppatrimonio-server
+
+# Rede opcional (para múltiplos serviços)
+networks:
+  default:
+    name: mcppatrimonio-network
+    driver: bridge

@@ -10,7 +10,7 @@ RUN apk add --no-cache python3 make g++
 WORKDIR /app
 
 # Copiar arquivos de dependências
-COPY package*.json ./
+COPY package.json package-lock.json ./
 COPY tsconfig.json ./
 
 # Instalar dependências (incluindo devDependencies para build)

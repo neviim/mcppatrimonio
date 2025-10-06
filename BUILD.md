@@ -179,27 +179,37 @@ Este erro foi corrigido. Se ainda ocorrer:
 
 **Problema**:
 ```
-ERROR [builder 4/10] RUN npm ci
+ERROR [builder 6/9] RUN npm ci
+npm error The `npm ci` command can only install with an existing package-lock.json
 ```
 
-**Solução**:
+**Causa**: O arquivo `.dockerignore` estava excluindo `package-lock.json`.
 
-1. Limpar cache do Docker:
+**Solução** (JÁ CORRIGIDA):
+
+1. O `.dockerignore` foi atualizado para NÃO ignorar `package-lock.json`
+2. O `Dockerfile` copia explicitamente `package.json` e `package-lock.json`
+
+Se ainda encontrar este erro:
+
+1. Verifique se `package-lock.json` existe:
+   ```bash
+   ls -la package-lock.json
+   ```
+
+2. Se não existir, gere novamente:
+   ```bash
+   npm install
+   ```
+
+3. Limpar cache do Docker:
    ```bash
    docker builder prune -a
    ```
 
-2. Build sem cache:
+4. Build sem cache:
    ```bash
    docker compose build --no-cache
-   ```
-
-3. Verificar package-lock.json:
-   ```bash
-   rm package-lock.json
-   npm install
-   git add package-lock.json
-   git commit -m "fix: atualiza package-lock.json"
    ```
 
 ### Erro: "COPY failed"

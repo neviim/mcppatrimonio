@@ -1,4 +1,5 @@
 # Multi-stage build para otimizar tamanho da imagem
+# Versão alternativa usando npm install em vez de npm ci
 
 # Stage 1: Build
 FROM node:22.15.0-alpine AS builder
@@ -11,15 +12,15 @@ WORKDIR /app
 
 # Copiar arquivos de dependências
 COPY package.json ./
-COPY package-lock.json ./
+
+# Copiar package-lock.json se existir (opcional)
+COPY package-lock.jso[n] ./ 2>/dev/null || true
+
 COPY tsconfig.json ./
 
-# Verificar se package-lock.json foi copiado (debug)
-RUN ls -la package* || true
-
-# Instalar dependências (incluindo devDependencies para build)
-# Tenta npm ci primeiro, se falhar usa npm install
-RUN npm ci || npm install
+# Instalar dependências
+# Usa npm install que funciona com ou sem lock file
+RUN npm install
 
 # Copiar código fonte
 COPY src ./src
@@ -56,7 +57,7 @@ USER nodejs
 # EXPOSE 3000
 
 # Labels para metadados
-LABEL maintainer="aipfLab Jads" \
+LABEL maintainer="homeLab Jads" \
       version="0.2.0" \
       description="Servidor MCP para gestão de patrimônio" \
       org.opencontainers.image.source="https://github.com/seu-usuario/mcppatrimonio"

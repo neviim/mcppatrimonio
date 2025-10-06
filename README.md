@@ -569,11 +569,27 @@ Exemplo de deployment em Kubernetes disponível em `docs/DOCKER.md`.
 
 ## 📖 Documentação Adicional
 
+### 🚀 Começando
+- **[Quick Start](QUICK_START.md)** - Comece em 5 minutos
 - [Guia de Instalação Completo](docs/INSTALLATION.md)
+- [Guia de Build](BUILD.md)
+
+### 🐳 Docker
+- [Guia Docker Completo](docs/DOCKER.md)
+- [Docker Quick Start](docs/DOCKER_QUICK_START.md)
+- [Docker Troubleshooting](DOCKER_TROUBLESHOOTING.md)
+
+### 📚 Referência
 - [Referência da API](docs/API.md)
 - [Exemplos de Uso](docs/EXAMPLES.md)
 - [Arquitetura do Sistema](docs/ARCHITECTURE.md)
-- [Guia Docker](docs/DOCKER.md)
+
+### 🔧 Desenvolvimento
+- [Gerenciamento de Versão Node.js](docs/NODE_VERSION.md)
 - [Como Contribuir](CONTRIBUTING.md)
+- [Changelog](CHANGELOG.md)
+
+### 🚀 Produção
+- [Guia de Deploy](DEPLOY.md)
 
 ---

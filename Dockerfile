@@ -12,7 +12,6 @@ WORKDIR /app
 # Copiar arquivos de dependências
 COPY package*.json ./
 COPY tsconfig.json ./
-COPY tsconfig.test.json ./
 
 # Instalar dependências (incluindo devDependencies para build)
 RUN npm ci

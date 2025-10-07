@@ -84,6 +84,8 @@ Edite `claude_desktop_config.json`:
 **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
 **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 
+### Opção 1: Modo STDIO (Local via Docker)
+
 ```json
 {
   "mcpServers": {
@@ -104,7 +106,57 @@ Edite `claude_desktop_config.json`:
 
 Substitua `C:\\caminho\\completo\\para\\mcppatrimonio` pelo caminho real.
 
-Reinicie Claude Desktop.
+### Opção 2: Modo HTTP (Remoto)
+
+```json
+{
+  "mcpServers": {
+    "Patrimonio": {
+      "transport": {
+        "type": "http",
+        "url": "http://localhost:3000/mcp/session",
+        "headers": {
+          "Authorization": "Bearer sua-api-key-aqui"
+        }
+      }
+    }
+  }
+}
+```
+
+**Configuração HTTP:**
+1. Configure `.env` com:
+   ```bash
+   TRANSPORT_MODE=http
+   HTTP_PORT=3000
+   API_KEYS=sua-api-key-aqui
+   ```
+
+2. Inicie o servidor:
+   ```bash
+   docker compose up -d
+   ```
+
+3. Reinicie Claude Desktop
+
+**Para acesso remoto externo**, substitua `localhost` pelo IP/hostname do servidor:
+```json
+{
+  "mcpServers": {
+    "Patrimonio": {
+      "transport": {
+        "type": "http",
+        "url": "https://seu-servidor.com:3000/mcp/session",
+        "headers": {
+          "Authorization": "Bearer sua-api-key-aqui"
+        }
+      }
+    }
+  }
+}
+```
+
+⚠️ **Importante**: Use HTTPS em produção! Veja [REMOTE_ACCESS.md](REMOTE_ACCESS.md) para configuração SSL/TLS.
 
 ## ✅ Verificar se Está Funcionando
 

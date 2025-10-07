@@ -9,7 +9,7 @@
   echo -e "\n2. Listando sessões ativas..."
   SESSIONS=$(curl -s $BASE_URL/mcp/sessions \
     -H "Authorization: Bearer $API_KEY")
-  echo $SESSIONS | jq
+  echo $SESSIONS | jq .
 
   echo -e "\n3. Criando nova sessão em background..."
   curl -X POST $BASE_URL/mcp/session \
@@ -40,12 +40,12 @@
           "id": "3577"
         }
       }
-    }' | jq
+    }' | jq .
 
   sleep 1
 
   echo -e "\n6. Fechando sessão..."
   curl -X DELETE $BASE_URL/mcp/session/$SESSION_ID \
-    -H "Authorization: Bearer $API_KEY" | jq
+    -H "Authorization: Bearer $API_KEY" | jq .
 
   kill $SESSION_PID 2>/dev/null

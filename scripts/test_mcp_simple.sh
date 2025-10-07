@@ -39,7 +39,7 @@ curl -X POST $BASE_URL/mcp \
   -H "Authorization: Bearer $API_KEY" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -d "$PAYLOAD"
+  -d "$PAYLOAD" | jq .
 
 echo ""
 echo ""

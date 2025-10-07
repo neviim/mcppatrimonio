@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import { ToolHandler } from "../handlers/ToolHandler.js";
 import { ResourceHandler } from "../handlers/ResourceHandler.js";
 import { logger } from "../utils/logger.js";
@@ -13,7 +14,7 @@ export class NeviimMCPServer {
   private mcpServer: McpServer;
   private toolHandler: ToolHandler;
   private resourceHandler: ResourceHandler;
-  private transport: StdioServerTransport;
+  private transport?: Transport;
   private isConnected: boolean = false;
 
   constructor() {
@@ -26,9 +27,6 @@ export class NeviimMCPServer {
     // Cria os handlers
     this.toolHandler = new ToolHandler(this.mcpServer);
     this.resourceHandler = new ResourceHandler(this.mcpServer);
-
-    // Cria o transport
-    this.transport = new StdioServerTransport();
 
     logger.info(`MCP Server initialized: ${APP_NAME} v${APP_VERSION}`);
   }
@@ -62,15 +60,22 @@ export class NeviimMCPServer {
   }
 
   /**
-   * Conecta o servidor ao transport
+   * Conecta o servidor ao transport (stdio ou custom)
    */
-  async connect(): Promise<void> {
+  async connect(customTransport?: Transport): Promise<void> {
     if (this.isConnected) {
       logger.warn("Server already connected");
       return;
     }
 
     try {
+      // Usa transport customizado (HTTP) ou cria stdio transport
+      if (customTransport) {
+        this.transport = customTransport;
+      } else {
+        this.transport = new StdioServerTransport();
+      }
+
       await this.mcpServer.connect(this.transport);
       this.isConnected = true;
       logger.info("MCP Server connected successfully");

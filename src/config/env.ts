@@ -16,6 +16,13 @@ const envSchema = z.object({
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
   RATE_LIMIT_WINDOW_MS: z.string().transform(Number).pipe(z.number().positive()).default("60000"),
   RATE_LIMIT_MAX_REQUESTS: z.string().transform(Number).pipe(z.number().positive()).default("100"),
+  // Configurações HTTP para acesso remoto
+  TRANSPORT_MODE: z.enum(["stdio", "http"]).default("stdio"),
+  HTTP_PORT: z.string().transform(Number).pipe(z.number().positive()).default("3000"),
+  HTTP_HOST: z.string().default("0.0.0.0"),
+  API_KEYS: z.string().optional().transform((val) => val ? val.split(",").map(k => k.trim()) : []),
+  ENABLE_CORS: z.string().transform((val) => val === "true").default("true"),
+  CORS_ORIGINS: z.string().optional().transform((val) => val ? val.split(",").map(o => o.trim()) : ["*"]),
 });
 
 // Tipo inferido do schema

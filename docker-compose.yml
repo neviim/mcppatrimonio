@@ -16,10 +16,17 @@ services:
     environment:
       NODE_ENV: production
       LOG_LEVEL: ${LOG_LEVEL:-info}
+      TRANSPORT_MODE: ${TRANSPORT_MODE:-stdio}
+      HTTP_PORT: ${HTTP_PORT:-3000}
+      HTTP_HOST: ${HTTP_HOST:-0.0.0.0}
 
-    # Stdin/Stdout para comunicação MCP
+    # Stdin/Stdout para comunicação MCP (usado em modo stdio)
     stdin_open: true
     tty: true
+
+    # Porta HTTP (usado em modo http)
+    ports:
+      - "${HTTP_PORT:-3000}:${HTTP_PORT:-3000}"
 
     # Limites de recursos
     deploy:

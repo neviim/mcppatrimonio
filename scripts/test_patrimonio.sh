@@ -6,7 +6,7 @@
 # Configuração
 API_KEY="e96ba5d6448d3839eda27f78f49a4f3c7c84053cb0c22f1dd8b734983def2789"
 BASE_URL="http://localhost:3000"
-PATRIMONIO_ID="${1:-3577}"
+PATRIMONIO_ID="${1:-68cafa3f80b7ee746b3548c7}"
 
 echo "==================================="
 echo "Teste MCP Patrimônio - HTTP Mode"
@@ -25,78 +25,68 @@ else
 fi
 echo ""
 
-# 2. Listar sessões ativas
-echo "2️⃣  Verificando sessões ativas..."
-SESSIONS=$(curl -s $BASE_URL/mcp/sessions \
-  -H "Authorization: Bearer $API_KEY")
-echo "$SESSIONS" | jq -C '.'
+# 2. Buscar patrimônio por ID
+echo "2️⃣  Buscando patrimônio ID: $PATRIMONIO_ID..."
 echo ""
 
-# 3. Criar nova sessão em background
-echo "3️⃣  Criando nova sessão MCP..."
-curl -N -X POST $BASE_URL/mcp/session \
-  -H "Authorization: Bearer $API_KEY" \
-  -H "Content-Type: application/json" 2>/dev/null | while IFS= read -r line; do
-    echo "📡 $line"
-done &
+# Cria o payload JSON
+PAYLOAD=$(cat <<EOF
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "neviim_get_patrimonio_por_id",
+    "arguments": {
+      "id": "$PATRIMONIO_ID"
+    }
+  }
+}
+EOF
+)
 
-SESSION_PID=$!
-sleep 3
-
-# 4. Obter session ID
-echo ""
-echo "4️⃣  Obtendo ID da sessão..."
-SESSION_ID=$(curl -s $BASE_URL/mcp/sessions \
-  -H "Authorization: Bearer $API_KEY" | jq -r '.sessions[0].sessionId')
-
-if [ -z "$SESSION_ID" ] || [ "$SESSION_ID" = "null" ]; then
-  echo "❌ Não foi possível obter o session ID"
-  kill $SESSION_PID 2>/dev/null
-  exit 1
-fi
-
-echo "✅ Session ID: $SESSION_ID"
-echo ""
-
-# 5. Buscar patrimônio
-echo "5️⃣  Buscando patrimônio ID: $PATRIMONIO_ID..."
-RESPONSE=$(curl -s -X POST $BASE_URL/mcp/message/$SESSION_ID \
+# Faz a requisição
+RESPONSE=$(curl -s -X POST $BASE_URL/mcp \
   -H "Authorization: Bearer $API_KEY" \
   -H "Content-Type: application/json" \
-  -d "{
-    \"jsonrpc\": \"2.0\",
-    \"id\": 1,
-    \"method\": \"tools/call\",
-    \"params\": {
-      \"name\": \"neviim_get_patrimonio_por_id\",
-      \"arguments\": {
-        \"id\": \"$PATRIMONIO_ID\"
-      }
-    }
-  }")
+  -H "Accept: application/json, text/event-stream" \
+  -d "$PAYLOAD")
 
-echo "📤 Mensagem enviada:"
-echo "$RESPONSE" | jq -C '.'
+echo "📥 Resposta recebida:"
 echo ""
 
-# Aguardar resposta no stream
-echo "⏳ Aguardando resposta no stream (5 segundos)..."
-sleep 5
-echo ""
+# Extrai apenas a linha de dados do SSE
+DATA_LINE=$(echo "$RESPONSE" | grep "^data: " | sed 's/^data: //')
 
-# 6. Fechar sessão
-echo "6️⃣  Fechando sessão..."
-CLOSE_RESPONSE=$(curl -s -X DELETE $BASE_URL/mcp/session/$SESSION_ID \
-  -H "Authorization: Bearer $API_KEY")
-echo "$CLOSE_RESPONSE" | jq -C '.'
+if [ -n "$DATA_LINE" ]; then
+  # Formata o JSON
+  echo "$DATA_LINE" | jq -C '.'
 
-# Matar processo do stream
-kill $SESSION_PID 2>/dev/null
+  echo ""
+  echo "📋 Dados do patrimônio:"
+  echo ""
+
+  # Extrai e exibe o conteúdo do text
+  PATRIMONIO_DATA=$(echo "$DATA_LINE" | jq -r '.result.content[0].text' 2>/dev/null)
+
+  if [ -n "$PATRIMONIO_DATA" ] && [ "$PATRIMONIO_DATA" != "null" ]; then
+    echo "$PATRIMONIO_DATA" | jq -C '.'
+  else
+    # Se houver erro, mostra
+    ERROR_MSG=$(echo "$DATA_LINE" | jq -r '.result.content[0].text // .error.message' 2>/dev/null)
+    echo "⚠️  $ERROR_MSG"
+  fi
+else
+  echo "❌ Nenhuma resposta recebida do servidor"
+fi
 
 echo ""
 echo "==================================="
 echo "✅ Teste concluído!"
 echo "==================================="
 echo ""
-echo "💡 Dica: A resposta do patrimônio aparece no stream da sessão (item 3️⃣)"
+echo "💡 Dicas:"
+echo "   - Use um ObjectId válido do MongoDB como parâmetro"
+echo "   - Exemplo: ./test_patrimonio.sh 68cafa3f80b7ee746b3548c7"
+echo "   - Para listar IDs disponíveis, use: ./test_mcp_simple.sh neviim_get_estatisticas"
 echo ""

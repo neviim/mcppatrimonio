@@ -16,7 +16,7 @@ Script simples e direto para testar qualquer tool.
 ./scripts/test_mcp_simple.sh neviim_get_estatisticas '{}'
 
 # Testar busca por ID (use ObjectId válido)
-./scripts/test_mcp_simple.sh neviim_get_patrimonio_por_id '{"id":"507f1f77bcf86cd799439011"}'
+./scripts/test_mcp_simple.sh neviim_get_patrimonio_por_id '{"id":"68cafa3f80b7ee746b3548c7"}'
 ```
 
 ### 📋 `test_get_version.sh`

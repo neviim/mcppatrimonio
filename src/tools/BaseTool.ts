@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { zodToJsonSchema } from "zod-to-json-schema";
 import type {
   MCPToolResult,
   MCPToolDefinition,
@@ -25,7 +26,10 @@ export abstract class BaseTool<TInput extends ToolParams = ToolParams> {
     return {
       title: this.title,
       description: this.description,
-      inputSchema: this.inputSchema as any,
+      inputSchema: zodToJsonSchema(this.inputSchema, {
+        name: this.name,
+        $refStrategy: "none",
+      }) as any,
     };
   }
 

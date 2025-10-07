@@ -35,9 +35,9 @@
       "id": 1,
       "method": "tools/call",
       "params": {
-        "name": "get_patrimonio_por_id",
+        "name": "neviim_get_patrimonio_por_id",
         "arguments": {
-          "id": 3577
+          "id": "3577"
         }
       }
     }' | jq

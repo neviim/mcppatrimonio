@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script para testar busca de patrimônio via HTTP
-# Uso: ./test_patrimonio.sh [ID_PATRIMONIO]
+# Uso: .scripts/test_patrimonio.sh [ID_PATRIMONIO]
 
 # Configuração
 API_KEY="e96ba5d6448d3839eda27f78f49a4f3c7c84053cb0c22f1dd8b734983def2789"

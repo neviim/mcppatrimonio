@@ -114,7 +114,7 @@ Substitua `C:\\caminho\\completo\\para\\mcppatrimonio` pelo caminho real.
     "Patrimonio": {
       "transport": {
         "type": "http",
-        "url": "http://localhost:3000/mcp/session",
+        "url": "http://localhost:3000/mcp",
         "headers": {
           "Authorization": "Bearer sua-api-key-aqui"
         }
@@ -146,7 +146,7 @@ Substitua `C:\\caminho\\completo\\para\\mcppatrimonio` pelo caminho real.
     "Patrimonio": {
       "transport": {
         "type": "http",
-        "url": "https://seu-servidor.com:3000/mcp/session",
+        "url": "https://seu-servidor.com:3000/mcp",
         "headers": {
           "Authorization": "Bearer sua-api-key-aqui"
         }
@@ -156,7 +156,9 @@ Substitua `C:\\caminho\\completo\\para\\mcppatrimonio` pelo caminho real.
 }
 ```
 
-⚠️ **Importante**: Use HTTPS em produção! Veja [REMOTE_ACCESS.md](REMOTE_ACCESS.md) para configuração SSL/TLS.
+⚠️ **Importante**:
+- Use HTTPS em produção! Veja [REMOTE_ACCESS.md](REMOTE_ACCESS.md) para configuração SSL/TLS
+- O endpoint correto é `/mcp` (não `/mcp/session`)
 
 ## ✅ Verificar se Está Funcionando
 

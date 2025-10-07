@@ -5,7 +5,7 @@
  */
 
 import { NeviimMCPServer } from "./core/MCPServer.js";
-import { HTTPServer } from "./server/HTTPServer.js";
+import { HTTPServerNative } from "./server/HTTPServerNative.js";
 import { logger } from "./utils/logger.js";
 import { env } from "./config/env.js";
 
@@ -50,7 +50,7 @@ async function startHttpMode(server: NeviimMCPServer) {
   }
 
   // Cria e inicia o servidor HTTP
-  const httpServer = new HTTPServer(server);
+  const httpServer = new HTTPServerNative(server);
   await httpServer.start();
 
   logger.info("Patrimonio MCP Server is running in HTTP mode");
@@ -62,7 +62,7 @@ async function startHttpMode(server: NeviimMCPServer) {
  * Inicializa e inicia o servidor
  */
 async function main() {
-  let httpServer: HTTPServer | undefined;
+  let httpServer: HTTPServerNative | undefined;
 
   try {
     logger.info("Starting Patrimonio MCP Server...");

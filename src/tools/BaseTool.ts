@@ -23,13 +23,23 @@ export abstract class BaseTool<TInput extends ToolParams = ToolParams> {
    * Retorna a definição da ferramenta para registro no MCP
    */
   getDefinition(): MCPToolDefinition {
+    // O SDK MCP espera receber o schema Zod como um objeto de propriedades
+    // Ex: { name: z.string(), age: z.number() }
+    // Mas nossos schemas são z.object({ ... }), então extraímos as propriedades
+    let schemaObj: any;
+
+    if (this.inputSchema instanceof z.ZodObject) {
+      // Extrai as propriedades do ZodObject
+      schemaObj = (this.inputSchema as any).shape;
+    } else {
+      // Se não for um ZodObject, passa o schema diretamente
+      schemaObj = this.inputSchema;
+    }
+
     return {
       title: this.title,
       description: this.description,
-      inputSchema: zodToJsonSchema(this.inputSchema, {
-        name: this.name,
-        $refStrategy: "none",
-      }) as any,
+      inputSchema: schemaObj,
     };
   }
 

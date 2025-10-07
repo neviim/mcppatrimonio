@@ -11,7 +11,11 @@
       "Bash(dir:*)",
       "Bash(docker compose:*)",
       "Bash(node:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(curl:*)",
+      "Bash(bash:*)",
+      "Bash(cat:*)",
+      "Bash(xargs cat:*)"
     ],
     "deny": [],
     "ask": []

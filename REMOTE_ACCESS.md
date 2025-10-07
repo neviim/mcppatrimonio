@@ -187,144 +187,106 @@ curl http://localhost:3000/info
 
 ### Protegidos (requer autenticação)
 
-#### POST /mcp/session
-Cria uma nova sessão MCP e estabelece conexão streaming.
+#### POST /mcp
+Endpoint principal do MCP para comunicação via Streamable HTTP.
+
+**Importante**: Este endpoint usa Server-Sent Events (SSE) para streaming de respostas.
 
 ```bash
-curl -X POST http://localhost:3000/mcp/session \
-  -H "Authorization: Bearer your-api-key" \
-  -H "Content-Type: application/json"
-```
-
-#### POST /mcp/message/:sessionId
-Envia uma mensagem JSON-RPC para uma sessão existente.
-
-```bash
-curl -X POST http://localhost:3000/mcp/message/session-id-here \
+curl -X POST http://localhost:3000/mcp \
   -H "Authorization: Bearer your-api-key" \
   -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
   -d '{
     "jsonrpc": "2.0",
     "id": 1,
     "method": "tools/call",
     "params": {
-      "name": "get_patrimonio",
+      "name": "neviim_get_version",
       "arguments": {}
     }
   }'
 ```
 
+Resposta (via SSE):
+```
+event: message
+data: {"result":{"content":[{"type":"text","text":"{\"version\":\"0.1.9\",\"build_timestamp\":\"2025-09-26T18:05:36Z\"}"}]},"jsonrpc":"2.0","id":1}
+```
+
 #### GET /mcp/sessions
-Lista todas as sessões ativas.
+Lista todas as sessões ativas (mantido para compatibilidade, mas modo atual é stateless).
 
 ```bash
 curl http://localhost:3000/mcp/sessions \
   -H "Authorization: Bearer your-api-key"
 ```
 
-#### DELETE /mcp/session/:sessionId
-Fecha uma sessão específica.
-
-```bash
-curl -X DELETE http://localhost:3000/mcp/session/session-id-here \
-  -H "Authorization: Bearer your-api-key"
-```
 
 ## 💡 Exemplos
 
-### Exemplo em Python
+### Tools Disponíveis
 
-```python
-import requests
-import json
+- `info` - Informações do servidor
+- `neviim_get_patrimonio` - Lista patrimônios por número
+- `neviim_get_patrimonio_por_id` - Busca patrimônio por ID (ObjectId do MongoDB)
+- `neviim_get_patrimonios_por_setor` - Lista patrimônios por setor
+- `neviim_get_patrimonios_por_usuario` - Lista patrimônios por usuário
+- `neviim_create_patrimonio` - Criar novo patrimônio
+- `neviim_update_patrimonio` - Atualizar patrimônio
+- `neviim_get_estatisticas` - Estatísticas do sistema
+- `neviim_get_version` - Versão da API de patrimônio
 
-API_KEY = "your-api-key"
-BASE_URL = "http://localhost:3000"
-
-headers = {
-    "Authorization": f"Bearer {API_KEY}",
-    "Content-Type": "application/json"
-}
-
-# Criar sessão
-response = requests.post(f"{BASE_URL}/mcp/session", headers=headers)
-print(f"Session created: {response.status_code}")
-
-# Listar sessões
-response = requests.get(f"{BASE_URL}/mcp/sessions", headers=headers)
-sessions = response.json()
-print(f"Active sessions: {sessions['count']}")
-```
-
-### Exemplo em Node.js
-
-```javascript
-const axios = require('axios');
-
-const API_KEY = 'your-api-key';
-const BASE_URL = 'http://localhost:3000';
-
-const headers = {
-  'Authorization': `Bearer ${API_KEY}`,
-  'Content-Type': 'application/json'
-};
-
-// Criar sessão
-async function createSession() {
-  const response = await axios.post(
-    `${BASE_URL}/mcp/session`,
-    {},
-    { headers }
-  );
-  console.log('Session created:', response.status);
-}
-
-// Listar sessões
-async function listSessions() {
-  const response = await axios.get(
-    `${BASE_URL}/mcp/sessions`,
-    { headers }
-  );
-  console.log('Active sessions:', response.data.count);
-}
-
-createSession();
-listSessions();
-```
-
-### Exemplo com cURL - Workflow Completo
+### Exemplo com cURL
 
 ```bash
 # 1. Verificar saúde do servidor
 curl http://localhost:3000/health
 
-# 2. Criar sessão (captura o response para pegar session ID)
-SESSION_RESPONSE=$(curl -X POST http://localhost:3000/mcp/session \
-  -H "Authorization: Bearer your-api-key" \
-  -H "Content-Type: application/json")
-
-# 3. Enviar comando para listar patrimônios
-curl -X POST http://localhost:3000/mcp/message/SESSION_ID \
+# 2. Obter versão da API de patrimônio
+curl -X POST http://localhost:3000/mcp \
   -H "Authorization: Bearer your-api-key" \
   -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
   -d '{
     "jsonrpc": "2.0",
     "id": 1,
     "method": "tools/call",
     "params": {
-      "name": "get_patrimonio",
+      "name": "neviim_get_version",
       "arguments": {}
     }
   }'
 
-# 4. Listar sessões ativas
-curl http://localhost:3000/mcp/sessions \
-  -H "Authorization: Bearer your-api-key"
-
-# 5. Fechar sessão
-curl -X DELETE http://localhost:3000/mcp/session/SESSION_ID \
-  -H "Authorization: Bearer your-api-key"
+# 3. Buscar estatísticas
+curl -X POST http://localhost:3000/mcp \
+  -H "Authorization: Bearer your-api-key" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 2,
+    "method": "tools/call",
+    "params": {
+      "name": "neviim_get_estatisticas",
+      "arguments": {}
+    }
+  }'
 ```
+
+### Resposta Esperada
+
+As respostas vêm no formato Server-Sent Events (SSE):
+
+```
+event: message
+data: {"result":{"content":[{"type":"text","text":"{\"version\":\"0.1.9\",\"build_timestamp\":\"2025-09-26T18:05:36Z\"}"}]},"jsonrpc":"2.0","id":1}
+```
+
+Para processar SSE em código, use bibliotecas apropriadas:
+- **Python**: `sseclient-py` ou `requests` com streaming
+- **Node.js**: `eventsource` ou `axios` com `responseType: 'stream'`
+- **Bash**: Use `curl -N` para não bufferizar
 
 ## 🔧 Troubleshooting
 

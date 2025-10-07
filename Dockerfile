@@ -1,7 +1,7 @@
 # Multi-stage build para otimizar tamanho da imagem
 
 # Stage 1: Build
-FROM node:22.15.0-alpine AS builder
+FROM node:22-alpine AS builder
 
 # Instalar dependências necessárias para build
 RUN apk add --no-cache python3 make g++
@@ -29,7 +29,8 @@ RUN npm run build
 RUN npm prune --production
 
 # Stage 2: Production
-FROM node:22.15.0-alpine AS production
+FROM node:22-alpine AS production
+RUN apk update && apk upgrade --no-cache
 
 # Adicionar usuário não-root para segurança
 RUN addgroup -g 1001 -S nodejs && \

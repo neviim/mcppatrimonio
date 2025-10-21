@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
       target: production
     image: mcppatrimonio:latest
-    container_name: mcppatrimonio-server
+    container_name: patrimonio-mcp 
     restart: unless-stopped
 
     # Variáveis de ambiente (via arquivo .env)
